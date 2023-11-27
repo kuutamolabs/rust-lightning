@@ -241,6 +241,7 @@ fn handle_network_graph_update<L: Deref>(
 fn update_scorer<'a, S: 'static + Deref<Target = SC> + Send + Sync, SC: 'a + WriteableScore<'a>>(
 	scorer: &'a S, event: &Event
 ) -> bool {
+	eprintln!("KUUTAMO_DEBUG: update score with event {event:?}");
 	match event {
 		Event::PaymentPathFailed { ref path, short_channel_id: Some(scid), .. } => {
 			let mut score = scorer.write_lock();
