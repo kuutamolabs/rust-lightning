@@ -1594,6 +1594,7 @@ impl OutboundPayments {
 		probing_cookie_secret: [u8; 32], secp_ctx: &Secp256k1<secp256k1::All>,
 		pending_events: &Mutex<VecDeque<(events::Event, Option<EventCompletionAction>)>>, logger: &L,
 	) -> bool where L::Target: Logger {
+		eprintln!("KUUTAMO_DEBUG: fail_htlc happened {:?}", path);
 		#[cfg(test)]
 		let DecodedOnionFailure {
 			network_update, short_channel_id, payment_failed_permanently, onion_error_code,
