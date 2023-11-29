@@ -83,6 +83,7 @@ where
 	/// [`Filter`]: lightning::chain::Filter
 	#[maybe_async]
 	pub fn sync(&self, confirmables: Vec<&(dyn Confirm + Sync + Send)>) -> Result<(), TxSyncError> {
+		eprintln!("KUUTAMO_DEBUG esplora.sync");
 		// This lock makes sure we're syncing once at a time.
 		#[cfg(not(feature = "async-interface"))]
 		let mut sync_state = self.sync_state.lock().unwrap();
@@ -183,6 +184,7 @@ where
 	fn sync_best_block_updated(
 		&self, confirmables: &Vec<&(dyn Confirm + Sync + Send)>, tip_hash: &BlockHash,
 	) -> Result<(), InternalError> {
+		eprintln!("KUUTAMO_DEBUG esplora.sync_best_block_updated");
 
 		// Inform the interface of the new block.
 		let tip_header = maybe_await!(self.client.get_header_by_hash(tip_hash))?;
@@ -202,6 +204,7 @@ where
 	fn sync_confirmed_transactions(
 		&self, sync_state: &mut SyncState, confirmables: &Vec<&(dyn Confirm + Sync + Send)>, confirmed_txs: Vec<ConfirmedTx>,
 	) {
+		eprintln!("KUUTAMO_DEBUG esplora.sync_confirmed_transactions");
 		for ctx in confirmed_txs {
 			for c in confirmables {
 				c.transactions_confirmed(
@@ -223,6 +226,7 @@ where
 	fn get_confirmed_transactions(
 		&self, sync_state: &SyncState,
 	) -> Result<Vec<ConfirmedTx>, InternalError> {
+		eprintln!("KUUTAMO_DEBUG esplora.get_confirmed_transactions");
 
 		// First, check the confirmation status of registered transactions as well as the
 		// status of dependent transactions of registered outputs.
@@ -268,6 +272,7 @@ where
 	fn get_confirmed_tx(
 		&self, txid: &Txid, expected_block_hash: Option<BlockHash>, known_block_height: Option<u32>,
 	) -> Result<Option<ConfirmedTx>, InternalError> {
+		eprintln!("KUUTAMO_DEBUG esplora.get_confirmed_tx");
 		if let Some(merkle_block) = maybe_await!(self.client.get_merkle_block(&txid))? {
 			let block_header = merkle_block.header;
 			let block_hash = block_header.block_hash();
@@ -311,6 +316,7 @@ where
 	fn get_unconfirmed_transactions(
 		&self, confirmables: &Vec<&(dyn Confirm + Sync + Send)>,
 	) -> Result<Vec<Txid>, InternalError> {
+		eprintln!("KUUTAMO_DEBUG esplora.get_unconfirmed_transactions");
 		// Query the interface for relevant txids and check whether the relevant blocks are still
 		// in the best chain, mark them unconfirmed otherwise
 		let relevant_txids = confirmables
@@ -372,11 +378,13 @@ where
 	L::Target: Logger,
 {
 	fn register_tx(&self, txid: &Txid, _script_pubkey: &Script) {
+		eprintln!("KUUTAMO_DEBUG esplora_sync_client.register_tx");
 		let mut locked_queue = self.queue.lock().unwrap();
 		locked_queue.transactions.insert(*txid);
 	}
 
 	fn register_output(&self, output: WatchedOutput) {
+		eprintln!("KUUTAMO_DEBUG esplora_sync_client.register_output");
 		let mut locked_queue = self.queue.lock().unwrap();
 		locked_queue.outputs.insert(output.outpoint.into_bitcoin_outpoint(), output);
 	}
