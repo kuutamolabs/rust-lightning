@@ -86,7 +86,7 @@ use bitcoin::bech32::{Base32Len, FromBase32, ToBase32, u5, WriteBase32};
 use crate::ln::msgs::DecodeError;
 use crate::util::ser::{Readable, WithoutLength, Writeable, Writer};
 
-mod sealed {
+pub mod sealed {
 	use crate::prelude::*;
 	use crate::ln::features::Features;
 
